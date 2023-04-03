@@ -11,7 +11,6 @@ function App() {
       <Jumbotron />
       <SoundSection />
       <DisplaySection />
-
     </div>
   );
 }
