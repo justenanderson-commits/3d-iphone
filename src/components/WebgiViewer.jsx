@@ -20,6 +20,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 const WebgiViewer = () => {
   const canvasRef = useRef(null)
   const setupViewer = useCallback(async () => {
+    const viewer = new ViewerApp({
+      canvas: canvasRef.current
+  })
     // Add some plugins
     const manager = await viewer.addPlugin(AssetManagerPlugin)
 
