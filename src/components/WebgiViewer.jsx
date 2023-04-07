@@ -1,4 +1,9 @@
 // Left off at ____ https://www.youtube.com/watch?v=IyBhFma4H1A&t=98s //
+
+
+
+
+
 import React, { useRef, useEffect, useState, useCallback, forwardRef } from 'react'
 import {
   ViewerApp,
@@ -15,9 +20,21 @@ import {
 } from 'webgi'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { scrollAnimation } from '../lib/scoll-animation'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const WebgiViewer = () => {
   const canvasRef = useRef(null)
+
+  const memoizedScrollAnimation = useCallback(
+    (position, target, onUpdate) => {
+      if(position && target && onUpdate) {
+        scrollAnimation(position, target, onUpdate)
+      } 
+    }, []
+  )
+
   const setupViewer = useCallback(async () => {
     const viewer = new ViewerApp({
       canvas: canvasRef.current
@@ -47,6 +64,11 @@ const WebgiViewer = () => {
     window.scrollTo(0, 0)
     
     let needsUpdate = true
+
+    const onUpdate = () => {
+      needsUpdate = true
+      viewer.setDirty()
+    }
     
     viewer.addEventListener("preframe", () => {
       if(needsUpdate) {
@@ -54,6 +76,8 @@ const WebgiViewer = () => {
       }
     })
   }, [])
+
+  memoizedScrollAnimation(position, target, onUpdate)
 
   useEffect(() => {
     setupViewer()
