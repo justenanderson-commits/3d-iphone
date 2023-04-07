@@ -1,10 +1,12 @@
 // Left off at ____ https://www.youtube.com/watch?v=IyBhFma4H1A&t=98s //
 
-
-
-
-
-import React, { useRef, useEffect, useState, useCallback, forwardRef } from 'react'
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  forwardRef,
+} from 'react'
 import {
   ViewerApp,
   AssetManagerPlugin,
@@ -16,34 +18,33 @@ import {
   BloomPlugin,
   GammaCorrectionPlugin,
   CanvasSnipperPlugin,
-  mobileAndTabletCheck
+  mobileAndTabletCheck,
 } from 'webgi'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { scrollAnimation } from '../lib/scoll-animation'
+import { scrollAnimation } from '../lib/scroll-animation'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const WebgiViewer = () => {
   const canvasRef = useRef(null)
 
-  const memoizedScrollAnimation = useCallback(
-    (position, target, onUpdate) => {
-      if(position && target && onUpdate) {
-        scrollAnimation(position, target, onUpdate)
-      } 
-    }, []
-  )
+  const memoizedScrollAnimation = useCallback((position, target, onUpdate) => {
+    if (position && target && onUpdate) {
+      scrollAnimation(position, target, onUpdate)
+    }
+  }, [])
 
   const setupViewer = useCallback(async () => {
     const viewer = new ViewerApp({
-      canvas: canvasRef.current
-  })
+      canvas: canvasRef.current,
+    })
 
     const manager = await viewer.addPlugin(AssetManagerPlugin)
 
     const camera = viewer.scene.activeCamera
     const position = camera.position
+    console.log('Camera: ', camera)
     const target = camera.target
 
     // Add plugins individually.
@@ -60,29 +61,30 @@ const WebgiViewer = () => {
     await manager.addFromPath('scene-black.glb')
 
     viewer.getPlugin(TonemapPlugin).config.clipBackground = true
-    viewer.scene.activeCamera.setCameraOptions({ controlsEnabled: false})
+    viewer.scene.activeCamera.setCameraOptions({ controlsEnabled: false })
     window.scrollTo(0, 0)
-    
+
     let needsUpdate = true
 
     const onUpdate = () => {
       needsUpdate = true
       viewer.setDirty()
     }
-    
-    viewer.addEventListener("preframe", () => {
-      if(needsUpdate) {
-      camera.positionTargetUpdated(true)
+
+    viewer.addEventListener('preframe', () => {
+      if (needsUpdate) {
+        camera.positionTargetUpdated(true)
       }
     })
+    
+    memoizedScrollAnimation(position, target, onUpdate)
   }, [])
 
-  memoizedScrollAnimation(position, target, onUpdate)
 
   useEffect(() => {
     setupViewer()
   }, [])
-   
+
   return (
     <div id="webgi-canvas-container">
       <canvas id="webgi-canvas-container" ref={canvasRef} />
@@ -91,4 +93,3 @@ const WebgiViewer = () => {
 }
 
 export default WebgiViewer
- 
