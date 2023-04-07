@@ -38,7 +38,6 @@ const WebgiViewer = () => {
     await viewer.addPlugin(SSAOPlugin)
     await viewer.addPlugin(BloomPlugin)
 
-    // This must be called once after all plugins are added.
     viewer.renderer.refreshPipeline()
 
     await manager.addFromPath('scene-black.glb')
@@ -62,7 +61,7 @@ const WebgiViewer = () => {
    
   return (
     <div id="webgi-canvas-container">
-      <canvas id="webgiv-canvas" ref={canvasRef} />
+      <canvas id="webgi-canvas-container" ref={canvasRef} />
     </div>
   )
 }
